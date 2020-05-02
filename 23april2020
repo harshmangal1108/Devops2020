@@ -1,0 +1,61 @@
+TASK 1
+## create 2 conatiners for django and mysql and use them
+### dockerfie for django ####
+from python
+maintainer harsh mangal
+run pip install django mysqlclient django-extensions
+add web1
+###########################
+#### docker compose file ####
+version : '3.8'
+serivces : 
+  db:
+    image: mysql
+    ports:
+      - '3306:3306'
+    container_name: db
+    environment: 
+      MYSQL_ROOT_PASSWORD: 'redhat'
+      MYSQL_DATABASE: 'mydatabase'
+  Task1:
+    image: task1_image
+    build: .
+    ports:
+     - "8080:8000"
+    container_name: task1
+    environment:
+    DJANGO_SUPERUSER_USERNAME: 'Harsh'
+    DJANGO_SUPERUSER_PASSWORD: 'root'
+    DJANGO_SUPERUSER_EMAIL: 'harsh@redhat.com'
+    depends_on:
+      - db
+    command: python manage.py runserver 0.0.0.0:8000
+########################
+run commands
+docker-compose up -d
+docker exec -it task1 python manage.py makemigrations
+docker exec -it task1 python manage.py migrate
+docker exec -it task1 python manage.py createsuperuser --noinput
+##############
+firefox 127.0.0.1:8080/admin
+############
+##### Task 2: container which can create another container
+docker run -v /var/run/docker.sock:/var/run/docker.sock ...
+
+#### task 4: ## Write a Dockerfile to Install httpd / nginx server also run httpd process from a non-root user
+
+#####Dockerfile
+FROM ubuntu
+RUN apt-get update
+RUN apt-get install sudo
+RUN adduser --disabled-password '' dockuser
+RUN usermod -aG dockuser sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER dockuser
+RUN sudo apt-get install apache2 -y
+
+
+
+
+
+

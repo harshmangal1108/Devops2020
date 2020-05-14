@@ -1,0 +1,45 @@
+#### Create Container inside Containers
+### Create Docker Image for Ansible
+###########Dockerfile###########
+from ubuntu
+maintainer harsh
+run apt update
+run apt install ansible -y
+apt install docker.io -y
+##############################
+
+###Build Image
+```bash
+docker build -t ansible:docker .
+```
+
+####Run Container
+```bash
+docker run -it -v /var/run/docker.sock:/var/run/docker.sock --name outside_cont ansible:docker
+```
+
+###### Create Playbook "docker.yml"
+---
+ - hosts: localhost
+   tasks:
+    - name: Install Python pip
+      apt: name=pip state=latest
+    - name: Install Python SDK for docker
+      pip:
+       name: docker
+    - name: Pull image
+      docker_image:
+       name: alpine
+       source: pull
+    - name: Create Containers
+      docker_container:
+       name: dockers
+       image: alpine
+       command: ping fb.com
+       state: present
+      with_sequence: count=10
+#######
+####Try to Run 
+```bash 
+ansible-playbook docker.yml
+```
